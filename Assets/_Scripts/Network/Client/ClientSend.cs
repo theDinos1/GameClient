@@ -29,13 +29,9 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void UDPTestReceived()
+    public static void PlayerMovement(bool[] inputs)
     {
-        using (Packet packet = new Packet((int)ClientPackets.udpTestReceived))
-        {
-            packet.Write("Received a UDP packet.");
-            SendUDPData(packet);
-        }
+        
     }
 
     #endregion

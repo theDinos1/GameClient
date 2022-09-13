@@ -63,6 +63,7 @@ public class Client : MonoBehaviour
 
             _ReceiveBuffer = new byte[DataBufferSize];
             Socket.BeginConnect(Instance.Ip, Instance.Port, ConnectCallback, Socket);
+            Debug.Log($"Connect TCP, IP: {Instance.Ip}:{Instance.Port}");
         }
 
         private void ConnectCallback(IAsyncResult _result)
@@ -140,7 +141,7 @@ public class Client : MonoBehaviour
                     using (Packet packet = new Packet(packetBytes))
                     {
                         int packetId = packet.ReadInt();
-                        Debug.Log($"Received package id: {packetId}");
+                        Debug.Log($"Received packet id: {packetId} via TCP");
                         _PacketHandlers[packetId](packet);
                     }
                 });
@@ -175,7 +176,7 @@ public class Client : MonoBehaviour
 
         public void Connect(int localPort)
         {
-            Debug.Log($"Connect UDP, IP:{Instance.Ip} Port {Instance.Port}");
+            Debug.Log($"Connect UDP, IP: {Instance.Ip}:{Instance.Port}");
             Socket = new UdpClient(localPort);
 
             Socket.Connect(EndPoint);
@@ -196,7 +197,6 @@ public class Client : MonoBehaviour
                 if(Socket != null)
                 {
                     Socket.BeginSend(packet.ToArray(), packet.Length(), null, null);
-                    Debug.Log("Send data!");
                 }
             }
             catch (Exception ex)
@@ -209,7 +209,6 @@ public class Client : MonoBehaviour
         {
             try
             {
-                Debug.Log("Received something from server");
                 byte[] data = Socket.EndReceive(result, ref EndPoint);
                 Socket.BeginReceive(ReceiveCallback, null);
 
@@ -241,7 +240,7 @@ public class Client : MonoBehaviour
                 using (Packet packet = new Packet(data))
                 {
                     int packetId = packet.ReadInt();
-                    Debug.Log($"packet id: {packetId}");
+                    Debug.Log($"Received packet id: {packetId} via UDP");
                     _PacketHandlers[packetId](packet);
                 }
 
@@ -254,7 +253,7 @@ public class Client : MonoBehaviour
         {
             {(int)ServerPackets.welcome, ClientHandle.Welcome },
             {(int)ServerPackets.sendPackage, ClientHandle.HandleMessage },
-            {(int)ServerPackets.udpTest, ClientHandle.UDPTest },
+            {(int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
 
         };
         Debug.Log("Initialize packets.");

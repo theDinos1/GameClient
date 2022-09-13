@@ -25,11 +25,14 @@ public class ClientHandle : MonoBehaviour
             Debug.Log(msg);
         }
     }
-
-    public static void UDPTest(Packet packet)
+    public static void SpawnPlayer(Packet packet)
     {
-        string msg = packet.ReadString();
-        Debug.Log($"Received packet via UDP. Contains message: {msg}");
-        ClientSend.UDPTestReceived();
+        int playerId = packet.ReadInt();
+        string username = packet.ReadString();
+        Vector3 position = packet.ReadVector3();
+        Quaternion rotatiom = packet.ReadQuaternion();
+
+        GameManager.Instance.SpawnPlayer(playerId, username, position, rotatiom);
     }
+
 }
